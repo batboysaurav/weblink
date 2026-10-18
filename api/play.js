@@ -19,7 +19,7 @@ export default function handler(req, res) {
   }
 
   // Generate the playback URL on the server, not in React.
-  const playbackUrl = `https://vidy.st/movie/${movieId}?color=FFA500`;
+  const playbackUrl = `https://vidy.st/movie/${movieId}?color=FFA500&autoplay=true`;
 
   res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({ playbackUrl });
