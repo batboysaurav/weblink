@@ -1,5 +1,5 @@
 const BASE = "https://api.themoviedb.org/3";
-const TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
+const TOKEN = import.meta.env.TMDB_ACCESS_TOKEN;
 
 async function request(path, params = {}, signal) {
   const url = new URL(`${BASE}${path}`);
