@@ -379,8 +379,8 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
   const runtime = formatRuntime(movie.runtime);
 
   return (
-    <>
-    <IntroAnimation />
+    
+   
     <div className="details">
 
 
@@ -431,7 +431,7 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
                 className="btn btn-primary"
                 onClick={() => setShowPlayer(true)}
               >
-                ▶ Play Movie 😂
+                ▶ Play Movie
               </button>
 
                 <button className="btn btn-primary" onClick={() => trailer.open(movie.id)} disabled={trailer.loading}>
@@ -482,7 +482,7 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
       {trailer.key && (
         <TrailerModal videoKey={trailer.key} title={movie.title} onClose={trailer.close} />
       )}
-    </div></>
+    </div>
   );
 }
 
@@ -739,6 +739,7 @@ function App() {
   return (
     
     <div className="app">
+       <IntroAnimation />
       <Navbar
         query={query}
         onQuery={setQuery}
