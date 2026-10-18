@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
+import IntroAnimation from "./Components/IntroAnimation";
 import {
   getTrendingMovies,
   getPopularMovies,
@@ -378,6 +379,8 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
   const runtime = formatRuntime(movie.runtime);
 
   return (
+    <>
+    <IntroAnimation />
     <div className="details">
 
 
@@ -479,7 +482,7 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
       {trailer.key && (
         <TrailerModal videoKey={trailer.key} title={movie.title} onClose={trailer.close} />
       )}
-    </div>
+    </div></>
   );
 }
 
@@ -734,6 +737,7 @@ function App() {
   }
 
   return (
+    
     <div className="app">
       <Navbar
         query={query}
@@ -744,7 +748,7 @@ function App() {
       />
       {content}
       <footer className="footer">
-        100RAB · A cinematic discovery experience built by Saurav · Movie data from TMDB
+        100RAB · A cinematic discovery experience built by Saurav ·
       </footer>
     </div>
   );
