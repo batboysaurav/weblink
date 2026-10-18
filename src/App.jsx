@@ -455,7 +455,7 @@ function MovieDetails({ movie: basic, isAdded, onToggle, onClose }) {
 
       <div className="trailer-frame player-frame">
         <iframe
-          src={`https://vidy.st/movie/${movie.id}/`}
+          src={`https://vidy.st/movie/${movie.id}&autoplay=true/`}
           title={`${movie.title} parody player`}
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
