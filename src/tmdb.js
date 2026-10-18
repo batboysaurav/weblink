@@ -1,61 +1,70 @@
-
+const BASE = "https://api.themoviedb.org/3";
 const TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
-export async function testTMDB() {
-  const response = await fetch(
-    "https://api.themoviedb.org/3/search/movie?query=Interstellar",
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        accept: "application/json",
-      },
-    },
+async function request(path, params = {}, signal) {
+  const url = new URL(`${BASE}${path}`);
+  Object.entries(params).forEach(([key, value]) =>
+    url.searchParams.set(key, value),
   );
+
+  const response = await fetch(url, {
+    signal,
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      accept: "application/json",
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`TMDB request failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  return data.results;
-}
-
-export async function getPopularMovies() {
-  const response = await fetch(
-    "https://api.themoviedb.org/3/movie/popular",
-    {
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
-        accept: "application/json",
-      },
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`TMDB request failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.results;
-}
-
-
-export async function getMovieDetails(movieId) {
-  const response = await fetch(
-    `https://api.themoviedb.org/3/movie/${movieId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
-        accept: "application/json",
-      },
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Movie details request failed: ${response.status}`);
   }
 
   return response.json();
 }
 
+export async function getTrendingMovies() {
+  return (await request("/trending/movie/week")).results;
+}
+
+export async function getPopularMovies() {
+  return (await request("/movie/popular")).results;
+}
+
+export async function getTopRatedMovies() {
+  return (await request("/movie/top_rated")).results;
+}
+
+export async function getUpcomingMovies() {
+  return (await request("/movie/upcoming")).results;
+}
+
+// genreIds: "28|12" means Action OR Adventure
+export async function getMoviesByGenre(genreIds) {
+  return (
+    await request("/discover/movie", {
+      with_genres: genreIds,
+      sort_by: "popularity.desc",
+      include_adult: "false",
+    })
+  ).results;
+}
+
+export async function searchMovies(query, signal) {
+  return (
+    await request("/search/movie", { query, include_adult: "false" }, signal)
+  ).results;
+}
+
+export function getMovieDetails(movieId, signal) {
+  return request(`/movie/${movieId}`, {}, signal);
+}
+
+export async function getMovieVideos(movieId) {
+  return (await request(`/movie/${movieId}/videos`)).results;
+}
+
+// Legal streaming availability per country (data provided by JustWatch)
+export async function getWatchProviders(movieId, signal) {
+  return (await request(`/movie/${movieId}/watch/providers`, {}, signal))
+    .results;
+}
