@@ -1,19 +1,15 @@
-const BASE = "https://api.themoviedb.org/3";
-const TOKEN = import.meta.env.TMDB_ACCESS_TOKEN;
+const BASE = "/api/tmdb";
 
 async function request(path, params = {}, signal) {
-  const url = new URL(`${BASE}${path}`);
-  Object.entries(params).forEach(([key, value]) =>
-    url.searchParams.set(key, value),
-  );
+  const url = new URL(BASE, window.location.origin);
 
-  const response = await fetch(url, {
-    signal,
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      accept: "application/json",
-    },
+  url.searchParams.set("endpoint", path.replace(/^\/+/, ""));
+
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
   });
+
+  const response = await fetch(url, { signal });
 
   if (!response.ok) {
     throw new Error(`TMDB request failed: ${response.status}`);
@@ -23,25 +19,25 @@ async function request(path, params = {}, signal) {
 }
 
 export async function getTrendingMovies() {
-  return (await request("/trending/movie/week")).results;
+  return (await request("trending/movie/week")).results;
 }
 
 export async function getPopularMovies() {
-  return (await request("/movie/popular")).results;
+  return (await request("movie/popular")).results;
 }
 
 export async function getTopRatedMovies() {
-  return (await request("/movie/top_rated")).results;
+  return (await request("movie/top_rated")).results;
 }
 
 export async function getUpcomingMovies() {
-  return (await request("/movie/upcoming")).results;
+  return (await request("movie/upcoming")).results;
 }
 
 // genreIds: "28|12" means Action OR Adventure
 export async function getMoviesByGenre(genreIds) {
   return (
-    await request("/discover/movie", {
+    await request("discover/movie", {
       with_genres: genreIds,
       sort_by: "popularity.desc",
       include_adult: "false",
@@ -51,20 +47,25 @@ export async function getMoviesByGenre(genreIds) {
 
 export async function searchMovies(query, signal) {
   return (
-    await request("/search/movie", { query, include_adult: "false" }, signal)
+    await request(
+      "search/movie",
+      { query, include_adult: "false" },
+      signal
+    )
   ).results;
 }
 
 export function getMovieDetails(movieId, signal) {
-  return request(`/movie/${movieId}`, {}, signal);
+  return request(`movie/${movieId}`, {}, signal);
 }
 
 export async function getMovieVideos(movieId) {
-  return (await request(`/movie/${movieId}/videos`)).results;
+  return (await request(`movie/${movieId}/videos`)).results;
 }
 
-// Legal streaming availability per country (data provided by JustWatch)
+// Legal streaming availability per country
 export async function getWatchProviders(movieId, signal) {
-  return (await request(`/movie/${movieId}/watch/providers`, {}, signal))
-    .results;
+  return (
+    await request(`movie/${movieId}/watch/providers`, {}, signal)
+  ).results;
 }
